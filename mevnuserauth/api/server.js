@@ -8,6 +8,8 @@ const cors = require('cors');
 var morgan = require('morgan');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
+const userRoute = require('./user.route');
+
 const mongoose = require('mongoose');
 const config = require('./DB.js');
 
@@ -24,6 +26,8 @@ app.use(bodyParser.json());
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
+
+app.use('/user', userRoute);
 
 app.listen(PORT, function(){
   console.log('Server is running on Port:',PORT);
