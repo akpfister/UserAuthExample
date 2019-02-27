@@ -18,6 +18,7 @@ import HomeComponent from './components/HomeComponent.vue';
 import LoginComponent from './components/LoginComponent.vue';
 import SignupComponent from './components/SignupComponent.vue';
 import UserComponent from './components/UserComponent.vue';
+import ProfileComponent from './components/ProfileComponent.vue';
 
 const routes = [
   {
@@ -39,6 +40,11 @@ const routes = [
       name: 'user',
       path: '/user',
       component: UserComponent
+  },
+  {
+      name: 'profile',
+      path: '/profile',
+      component: ProfileComponent
   }
 ];
 

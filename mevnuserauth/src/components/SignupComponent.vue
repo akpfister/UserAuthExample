@@ -32,7 +32,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label>Password (Confirm):</label>
-                    <input type="password" class="form-control">
+                    <input type="password" class="form-control" v-model="confirmation">
                   </div>
                 </div>
               </div><br />
@@ -49,17 +49,26 @@
 export default {
   data(){
     return {
-      user: {}
+      user: {},
+      confirmation: ""
     }
   },
   methods: {
     addUser() {
-      //eslint-disable-next-line
-      console.log(this.user);
-      let uri = 'http://localhost:4000/user/signup';
-      this.axios.post(uri, this.user).then(() => {
-        this.$router.push({ name: 'user'});
-      });
+      if(this.user.password != this.confirmation) {
+        //eslint-disable-next-line
+        console.log("Passwords do no match");
+        this.$router.push({ name: 'signup'});
+      } else {
+        //eslint-disable-next-line
+        console.log(this.user);
+        let uri = 'http://localhost:4000/user/signup';
+        this.axios.post(uri, this.user).then(response => {
+          //eslint-disable-next-line
+          console.log(response.data);
+          this.$router.push({ name: 'login'});
+        });
+      }
     }
   }
 }

@@ -27,13 +27,44 @@ userRoutes.route('/signup').post(function (req, res) {
           res.send(err);
         } else {
           console.log("User created.");
-          let token = jwt.sign({ id: user._id }, config.secret, { expiresIn: 86400 });
-          res.json({
+          // let token = jwt.sign({ id: user._id }, config.secret, { expiresIn: 86400 });
+          res.send({
             success: true,
             message: 'Successfully created user!',
+            token: null
+          });
+        }
+      });
+    }
+  });
+});
+
+// Route to login a user
+userRoutes.route('/login').post(function (req, res) {
+  User.findOne({ 'username' : req.body.username }, function (err, user) {
+    if(err) {
+      res.status(500).send({
+        error: err,
+        message: 'Backend Server Error.'
+      });
+    } else if(!user) {
+      res.send({ message: 'User not found' });
+    } else {
+      bcrypt.compare(req.body.password, user.password).then(function(validPassword) {
+        if(!validPassword) {
+          res.status(400).send({ auth: false, error: 'Incorrect password.', token: null })
+        } else {
+          var token = jwt.sign({ id: user._id }, config.secret, { expiresIn: 86400 });
+          res.status(200).send({
+            success: true,
+            message: 'Successfully logged in user!',
             token: token
           });
         }
+      }).catch((err) => {
+        console.log("Error comparing passwords.");
+        console.log(err);
+        res.status(500).send({ auth: false, error: 'Backend Server Error.', token: null })
       });
     }
   });

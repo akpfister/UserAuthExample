@@ -14,7 +14,10 @@
           <router-link to="/signup" class="nav-link">Signup</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/user" class="nav-link">User Profile</router-link>
+          <router-link to="/user" class="nav-link">Users</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/profile" class="nav-link">Profile</router-link>
         </li>
       </ul>
     </nav><br />
