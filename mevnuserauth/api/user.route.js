@@ -7,6 +7,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./DB.js');
 
+let cookie_domain = 'localhost';
+
 // Require User model in our routes module
 let User = require('./usermodels/user.model');
 
@@ -55,7 +57,9 @@ userRoutes.route('/login').post(function (req, res) {
           res.status(400).send({ auth: false, error: 'Incorrect password.', token: null })
         } else {
           var token = jwt.sign({ id: user._id }, config.secret, { expiresIn: 86400 });
-          res.status(200).send({
+          res.cookie('csrf_token', token, { maxAge: 86400000, httpOnly: true, domain: cookie_domain })
+          .status(200)
+          .send({
             success: true,
             message: 'Successfully logged in user!',
             token: token
@@ -80,5 +84,31 @@ userRoutes.route('/').get(function (req, res) {
     }
   });
 });
+
+// Route to user profile
+userRoutes.route('/profile').get(function (req, res) {
+  var header_token = req.headers['x-access-token']
+  var cookie_token = req.cookies['csrf_token']
+
+  if (!header_token || !cookie_token) {
+    return res.status(403).send({ auth: false, message: 'No token.' });
+  } else if (header_token != cookie_token) {
+    return res.status(403).send({ auth: false, message: 'Tokens do not match.' });
+  }
+  jwt.verify(cookie_token, config.secret, function(err, decoded) {
+    if (err) {
+      return res.status(403).send({ auth: false, message: 'Failed to authenticate token.' })
+    }
+    var userId = decoded.id
+    User.findById(userId, function (err, user) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.send(user);
+      }
+    });
+  });
+});
+
 
 module.exports = userRoutes;

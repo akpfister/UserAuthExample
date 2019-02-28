@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { setToken } from './setAuth'
 export default {
   data(){
     return {
@@ -43,7 +44,8 @@ export default {
       let uri = 'http://localhost:4000/user/login';
       this.axios.post(uri, this.user).then(response => {
         //eslint-disable-next-line
-        console.log(response.data);
+        console.log(response.data.token);
+        setToken(response.data.token);
         this.$router.push({ name: 'user'});
       });
     }
